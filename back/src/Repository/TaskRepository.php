@@ -14,4 +14,18 @@ class TaskRepository extends DocumentRepository
             ->execute()
             ->toArray();
    }
+   public function nbOfTodosInTotal():array
+   {
+       $nbTodo =  count($this->createAggregationBuilder()
+           ->match()
+           ->field('status')
+           ->equals('todo')
+           ->execute()
+           ->toArray());
+       $nbTotal = count($this->createAggregationBuilder()
+           ->match()
+           ->execute()
+           ->toArray());
+       return ['nbTodo'=>$nbTodo,'nbTotal'=>$nbTotal];
+   }
 }

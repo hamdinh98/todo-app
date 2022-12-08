@@ -22,6 +22,11 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    param_converter:
+        class: 'Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\DoctrineParamConverter'
+        arguments: [ '@doctrine_mongodb' ]
+        tags:
+            - { name: 'request.param_converter', converter: 'doctrine.odm' }
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
     App\Controller\:

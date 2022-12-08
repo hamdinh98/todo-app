@@ -4,13 +4,16 @@ namespace App\Controller;
 
 use App\Document\Task;
 use App\resolver\TodoResolver;
+use Doctrine\ODM\MongoDB\MongoDBException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use App\DTO\TodosIds;
 
 /**
  * @Route("/todo", name="todo")
@@ -21,11 +24,15 @@ class TaskController extends AbstractController
 
     public function __construct(TodoResolver $todoResolver)
     {
+
+
+
         $this->todoResolver = $todoResolver;
     }
 
     /**
      * @Route("", name="create", methods={"POST"})
+     * @throws MongoDBException
      */
     public function create(Request $request, SerializerInterface $serializer, ValidatorInterface $validator): JsonResponse
     {
@@ -52,35 +59,32 @@ class TaskController extends AbstractController
     /**
      * @Route("/get/{id}", name="fetchById", methods={"GET"})
      */
-    public function getById(int $todo): Response
+    public function getById(string $id): Response
     {
+        $todo = $this->todoResolver->findById($id);
         return $this->json($todo, Response::HTTP_OK);
     }
 
     /**
      * @Route("/{id}", name="update", methods={"PATCH"})
      */
-    public function update(Request $request, SerializerInterface $serializer, ValidatorInterface $validator): Response
+    public function update(Request $request,string $id,  SerializerInterface $serializer, ValidatorInterface $validator): Response
     {
-       $todo = $serializer->deserialize($request->getContent(),Task::class,'json');
-       $errors = $validator->validate($todo);
-       $id = $request->query()->get("id");
-       if($errors || $id==null)
-       {
-           return $this->json($errors,Response::HTTP_BAD_REQUEST);
-       }
-       if($this->todoResolver->update($todo,$id)){
-           return $this->json("Task updated with success",Response::HTTP_ACCEPTED);
-       }
-           return $this->json("Error",Response::HTTP_INTERNAL_SERVER_ERROR);
+        $Find_todo = $this->todoResolver->findById($id);
+        $todo = $serializer->deserialize($request->getContent(),Task::class,'json',[AbstractNormalizer::OBJECT_TO_POPULATE => $Find_todo]);
+        $errors = $validator->validate($todo);
+        if (count($errors) > 0) {
+            return $this->json($errors, Response::HTTP_BAD_REQUEST);
+        }
+        $this->todoResolver->create($todo);
+        return $this->json($todo, Response::HTTP_OK);
     }
 
     /**
-     * @Route("/filter", name="filter", methods={"GET"})
+     * @Route("/filter/{status}", name="filter", methods={"GET"})
      */
-    public function filter(Request $request,SerializerInterface $serializer): Response
+    public function filter(string $status,SerializerInterface $serializer): Response
     {
-       $status = $request->query()->get('status');
        if($status==null)
            return $this->json("bad request",Response::HTTP_BAD_REQUEST);
        $todos = $this->todoResolver->filterStatus($status);
@@ -91,12 +95,21 @@ class TaskController extends AbstractController
     /**
      * @Route("", name="delete", methods={"DELETE"})
      */
-    public function delete(Request $request, SerializerInterface $serializer): Response
+    public function delete(Request $request,SerializerInterface $serializer): Response
     {
-        $todosIds = json($request->query()->get('todosId'));
+        $todosIds = $serializer->deserialize($request->getContent(),TodosIds::class,'json');
         if($todosIds==null)
             return $this->json("todosIds is null",Response::HTTP_BAD_REQUEST);
-        $this->todoResolver->delete($todosIds);
-        return $this->json("success",Response::HTTP_OK);
+         $this->todoResolver->delete($todosIds->getIds());
+         return $this->json("success",Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/count", name="count", methods={"GET"})
+     */
+    public function nbOfTodosInTotal(): Response
+    {
+        $nbTodo = $this->todoResolver->nbOfTodosInTotal();
+        return $this->json($nbTodo, Response::HTTP_OK);
     }
 }

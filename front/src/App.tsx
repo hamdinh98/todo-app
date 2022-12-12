@@ -1,34 +1,100 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import "./App.css";
+import Todo from "./components/todos/Todo.component";
+import LoginForm from "./components/login/Login.component"
+import {
+    createBrowserRouter,
+    RouterProvider, useNavigate,
+} from "react-router-dom";
+import Navbar from "./components/navbar/Navbar.component";
+import Form from "./components/form/form.component";
+import {Task} from "./model/Task";
+import React from "react";
+import PrivateRoute from "./utils/PrivateRoute";
+import axios from "axios";
 
-function App() {
-  const [count, setCount] = useState(0)
+const LoginElementForRoutes = () => {
 
-  return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
+  return(
+      <>
+        <Navbar />
+        <LoginForm onSubmit={(username, password)=> localStorage.setItem('username',JSON.stringify({
+        username,password
+        }))}/>
+      </>
   )
 }
 
-export default App
+const ListElementForRoutes = () => {
+    return(
+        // @ts-ignore
+        <PrivateRoute>
+            <Navbar />
+            <Todo />
+        </PrivateRoute>
+    )
+}
+
+const AddElementForRoutes = () => {
+
+    const navigate = useNavigate();
+    return (
+      <PrivateRoute>
+        <Navbar />
+        <Form
+            // @ts-ignore
+          submit={async (task: Task) => {
+              try {
+                  const {data} = await axios.post('http://localhost:8000/todo',task);
+                  if(data){
+                      console.log(data);
+                      navigate('/list');
+                  }
+              }catch (e) {
+                  console.log(e);
+              }
+          }}
+        />
+      </PrivateRoute>
+    );
+}
+
+const UpdateElementForRoutes = () => {
+    return(
+        <PrivateRoute>
+            <Navbar />
+            <Form submit={async (todo?: Task)=>{
+            }
+            }/>
+        </PrivateRoute>
+    )
+}
+
+const router = createBrowserRouter([
+  {
+    path: "",
+    element: <LoginElementForRoutes/>,
+  },
+  {
+    path: "list",
+    element: <ListElementForRoutes />,
+  },
+  {
+    path: "add",
+    element: <AddElementForRoutes />,
+  },
+  {
+    path: "update",
+    element: <UpdateElementForRoutes />,
+  }
+
+
+]);
+const App = () => (
+
+      <RouterProvider router={router} />
+);
+
+
+
+
+export default App;

@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace App\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Ignore;
 /**
  *  @ODM\Document(repositoryClass="App\Repository\TaskRepository")
  */

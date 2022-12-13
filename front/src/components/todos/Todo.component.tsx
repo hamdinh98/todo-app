@@ -5,7 +5,7 @@ import axios from "axios";
 import {useNavigate} from "react-router-dom";
 
 // @ts-ignore
-function TaskRow({task,removeTask,completeTask,index}) {
+function TaskRow({task,removeTask,changeStatus}) {
 
     const navigate = useNavigate();
     return (
@@ -15,14 +15,15 @@ function TaskRow({task,removeTask,completeTask,index}) {
         >
             {task.title}
             <button style={{background:'blue'}} onClick={()=>navigate(`/update/${task.id}`)}>update</button>
-            <button style={{ background: "red" }} onClick={() => removeTask(index)}>x</button>
+            <button style={{ background: "red" }} onClick={() => removeTask(task.id)}>x</button>
             {
                 ['todo','done','in-progress'].map((status,index)=>{
-                   return status!==task.status && <button onClick={() => completeTask(index,status)}>{status}</button>
+                   return status!==task.status && <button onClick={()=>{
+                       changeStatus(task.id,status)}
+                   }>{status}</button>
                 }
                 )
             }
-
         </div>
 
     )
@@ -48,18 +49,20 @@ function Todo() {
         }
     }, []);
 
-
-
-    const removeTask = (index:number) => {
+    const removeTask = async (id:number) => {
         // @ts-ignore
-        const newTasks:Task[] = [...tasks];
-        newTasks.splice(index, 1);
-        setTasks(newTasks);
+
+        const {data} = await axios.delete(`http://localhost:8000/todo`,{data:{ids:[id]}});
+        if(data){
+            // @ts-ignore
+            setTasks(tasks.filter(task=>task.id!==id));
+        }
+
     };
-    const completeTask = (index:any) => {
-        const newTasks = [...tasks];
-        newTasks[index].status = true;
-        setTasks(newTasks);
+    const changeStatus = async (index:number,status:string) => {
+       const {data} = await axios.patch(`http://localhost:8000/todo/${index}`,{
+              status:status
+       });
     };
     return (
         <div className="todo-container">
@@ -70,7 +73,7 @@ function Todo() {
                     task={task}
                     // @ts-ignore
                     index={index}
-                    completeTask={completeTask}
+                    changeStatus={changeStatus}
                     removeTask={removeTask}
                     key={index}
     />

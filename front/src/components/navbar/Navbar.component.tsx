@@ -16,7 +16,6 @@ const Navbar: React.FC = () => {
      username:username && <Link to={'/list'}>{username}</Link>,
      add:username && <Link to={'/add'}>add</Link>,
      list:username && <Link to={'/list'}>List</Link>,
-     update:username && <Link to={'/update'}>Update</Link>,
     }
 
     return(
@@ -38,10 +37,6 @@ const Navbar: React.FC = () => {
                 {
                     // @ts-ignore
                     renderTab['add']
-                }
-                {
-                    // @ts-ignore
-                    renderTab['update']
                 }
             </div>
         </nav>

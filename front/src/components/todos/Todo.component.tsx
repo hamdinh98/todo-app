@@ -1,18 +1,28 @@
 import React, {useEffect, useState} from 'react';
 import './Todo.style.css';
-import {Task, TaskStatus} from "../../model/Task";
+import {Task} from "../../model/Task";
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 // @ts-ignore
 function TaskRow({task,removeTask,completeTask,index}) {
+
+    const navigate = useNavigate();
     return (
         <div
             className="task"
-            style={{ textDecoration: task.status=='DONE' ? "line-through" : "" }}
+            style={{ textDecoration: task.status=='done' ? "line-through" : "" }}
         >
             {task.title}
+            <button style={{background:'blue'}} onClick={()=>navigate(`/update/${task.id}`)}>update</button>
             <button style={{ background: "red" }} onClick={() => removeTask(index)}>x</button>
-            <button onClick={() => completeTask(index)}>Complete</button>
+            {
+                ['todo','done','in-progress'].map((status,index)=>{
+                   return status!==task.status && <button onClick={() => completeTask(index,status)}>{status}</button>
+                }
+                )
+            }
+
         </div>
 
     )
@@ -20,41 +30,7 @@ function TaskRow({task,removeTask,completeTask,index}) {
 
 
 
-// @ts-ignore
-function CreateTask({ addTask }) {
-    const [value, setValue] = useState("");
 
-    const handleSubmit = async (e:any) => {
-        e.preventDefault();
-        if (!value) return;
-        try {
-            const {data} = await axios.post('http://localhost:8000/todo',{
-                title:value,
-                status:TaskStatus.TODO,
-                date:Date.now(),
-                note:'some notes'
-            },
-                // @ts-ignore
-                {"Access-Control-Allow-Origin": "*"});
-            console.log(data);
-        }catch (e) {
-            console.log(e);
-        }
-
-    }
-
-    return (
-        <form onSubmit={handleSubmit}>
-            <input
-                type="text"
-                className="input"
-                value={value}
-                placeholder="Add a new task"
-                onChange={e => setValue(e.target.value)}
-            />
-        </form>
-    );
-}
 function Todo() {
     const [tasks, setTasks] = useState<Task[] | undefined>(undefined);
     //fetching data from the backend
@@ -83,12 +59,6 @@ function Todo() {
     const completeTask = (index:any) => {
         const newTasks = [...tasks];
         newTasks[index].status = true;
-        setTasks(newTasks);
-    };
-
-    const addTask = (title:any) => {
-        const newTasks = [...tasks, { title, completed: false }];
-        // @ts-ignore
         setTasks(newTasks);
     };
     return (

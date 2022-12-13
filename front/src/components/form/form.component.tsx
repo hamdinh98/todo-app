@@ -2,8 +2,7 @@ import React,{useState} from 'react';
 import {Form, FormGroup, Label, Input, Button} from 'reactstrap';
 import './form.style.css';
 import {Task, TaskStatus} from "../../model/Task";
-import {Simulate} from "react-dom/test-utils";
-import submit = Simulate.submit;
+
 interface Props {
     task?: Task;
     submit: (todo: Task | undefined) => void;

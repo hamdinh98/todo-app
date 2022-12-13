@@ -31,30 +31,26 @@ class TodoResolver
      */
     public function delete(array $todosId):void
     {
-        $todos = $this->taskRepo->findBy(['_id'=>['$in'=>$todosId]]);
+        $todos = $this->taskRepo->findBy(['id'=>['$in'=>$todosId]]);
         foreach ($todos as $todo)
         {
           $this->taskRepo->getDocumentManager()->remove($todo);
         }
         $this->taskRepo->getDocumentManager()->flush();
     }
-    public function findAll(string $sort, string $order):array
+    public function findAll(string $sort, string $order,?string $status):array
     {
-           return $this->taskRepo->fetchAndSortByOrder($sort,$order);
+        if($status===null)
+        {
+            return $this->taskRepo->findBy([],[$sort=>$order]);
+        }
+        return $this->taskRepo->findBy(['status'=>$status],[$sort=>$order]);
+
     }
 
     public function findById(string $id):Task
     {
         //dd($id);
         return $this->taskRepo->findOneBy(['_id'=>$id]);
-    }
-    public function filterStatus(string $status):array
-    {
-        return $this->taskRepo->findBy(['status'=>$status]);
-    }
-
-    public function nbOfTodosInTotal():array
-    {
-        return $this->taskRepo->nbOfTodosInTotal();
     }
 }

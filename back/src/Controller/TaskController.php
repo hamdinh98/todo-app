@@ -81,7 +81,7 @@ class TaskController extends AbstractController
     public function delete(Request $request,SerializerInterface $serializer): Response
     {
         $todosIds = $serializer->deserialize($request->getContent(),TodosIds::class,'json');
-        if($todosIds==null)
+        if($todosIds===null)
             return $this->json("todosIds is null",Response::HTTP_BAD_REQUEST);
          $this->todoResolver->delete($todosIds->getIds());
          return $this->json("success",Response::HTTP_OK);

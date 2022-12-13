@@ -3,7 +3,6 @@ declare(strict_types=1);
 namespace App\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Serializer\Annotation\Ignore;
 /**
  *  @ODM\Document(repositoryClass="App\Repository\TaskRepository")
  */
@@ -26,32 +25,6 @@ class Task
     private \DateTime $date;
 
     //make getter and setter to all attributes
-
-    public function __construct(string $title, string $note, ?string $status, \DateTime $date)
-    {
-        //$this->id = $id;
-        $this->title = $title;
-        $this->note = $note;
-        $this->status = $status;
-        $this->date = $date;
-    }
-    public function oneArgConstructor(string $title)
-    {
-        $this->title = $title;
-    }
-    public function twoArgConstructor(string $title,string $note)
-    {
-        $this->title = $title;
-        $this->note = $note;
-    }
-    public function threeArgConstructor(string $title,string $note,string $status)
-    {
-        $this->title = $title;
-        $this->note = $note;
-        $this->status = $status;
-    }
-
-
     public function getId()
     {
         return $this->id;

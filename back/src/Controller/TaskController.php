@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Controller;
-
 use App\Document\Task;
 use App\resolver\TodoResolver;
 use Doctrine\ODM\MongoDB\MongoDBException;
@@ -24,12 +22,8 @@ class TaskController extends AbstractController
 
     public function __construct(TodoResolver $todoResolver)
     {
-
-
-
         $this->todoResolver = $todoResolver;
     }
-
     /**
      * @Route("", name="create", methods={"POST"})
      * @throws MongoDBException
@@ -52,7 +46,8 @@ class TaskController extends AbstractController
     {
         $sortBy = $request->query->get('sortBy','title');
         $order = $request->query->get('order','desc');
-        $todos = $this->todoResolver->findAll($sortBy , $order);
+        $status = $request->query->get('status');
+        $todos = $this->todoResolver->findAll($sortBy , $order,$status);
         return $this->json($todos, Response::HTTP_OK);
     }
 
@@ -81,18 +76,6 @@ class TaskController extends AbstractController
     }
 
     /**
-     * @Route("/filter/{status}", name="filter", methods={"GET"})
-     */
-    public function filter(string $status,SerializerInterface $serializer): Response
-    {
-       if($status==null)
-           return $this->json("bad request",Response::HTTP_BAD_REQUEST);
-       $todos = $this->todoResolver->filterStatus($status);
-       $todosJson = $serializer->serialize($todos,'json');
-       return $this->json($todosJson,Response::HTTP_OK);
-    }
-
-    /**
      * @Route("", name="delete", methods={"DELETE"})
      */
     public function delete(Request $request,SerializerInterface $serializer): Response
@@ -104,12 +87,4 @@ class TaskController extends AbstractController
          return $this->json("success",Response::HTTP_OK);
     }
 
-    /**
-     * @Route("/count", name="count", methods={"GET"})
-     */
-    public function nbOfTodosInTotal(): Response
-    {
-        $nbTodo = $this->todoResolver->nbOfTodosInTotal();
-        return $this->json($nbTodo, Response::HTTP_OK);
-    }
 }

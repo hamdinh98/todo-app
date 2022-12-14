@@ -3,17 +3,14 @@ import "./Todo.style.css";
 import { Task, TaskStatus } from "../../model/Task";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
-} from "reactstrap";
-import { Simulate } from "react-dom/test-utils";
-import submit = Simulate.submit;
 
 // @ts-ignore
 function TaskRow({ task, removeTask, changeStatus }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const toogleModal = () => {
+    setIsOpen(!isOpen);
+  };
+
   const navigate = useNavigate();
   return (
     <div
@@ -30,19 +27,23 @@ function TaskRow({ task, removeTask, changeStatus }) {
       <button style={{ background: "red" }} onClick={() => removeTask(task.id)}>
         x
       </button>
-      {["todo", "done", "in-progress"].map((status, index) => {
-        return (
-          status !== task.status && (
-            <button
-              onClick={() => {
-                changeStatus(task.id, status);
-              }}
-            >
-              {status}
-            </button>
-          )
-        );
-      })}
+      <button style={{ background: "blue" }} onClick={() => toogleModal()}>
+        Details
+      </button>
+
+      <select
+        name="status"
+        id="status"
+        onChange={() => {
+          changeStatus(task.id, task.status);
+        }}
+        style={{ marginLeft: "10px" }}
+      >
+        <option value={TaskStatus.TODO}>TODO</option>
+        <option value={TaskStatus.DONE}>DONE</option>
+        <option value={TaskStatus.IN_PROGRESS}>IN-PROGRESS</option>
+      </select>
+      <Details isOpen={isOpen} details={task} />
     </div>
   );
 }
@@ -102,6 +103,7 @@ function Todo() {
   return (
     <div className="todo-container">
       <div className="header">TODO - ITEMS</div>
+      Filter by status
       <select
         name="status"
         id="status"
@@ -129,5 +131,31 @@ function Todo() {
     </div>
   );
 }
+
+interface DetailsPropos {
+  isOpen: boolean;
+  details: Task;
+}
+const Details = (props: DetailsPropos) => {
+  return (
+    <React.Fragment>
+      {props.isOpen && (
+        <div>
+          <div>
+            <label>
+              title: <h2>{props.details.title}</h2>
+            </label>
+            <label>
+              Note: <p>{props.details.note}</p>
+            </label>
+            <label>
+              status: <p>{props.details.status}</p>
+            </label>
+          </div>
+        </div>
+      )}
+    </React.Fragment>
+  );
+};
 
 export default Todo;

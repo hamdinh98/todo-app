@@ -12,12 +12,15 @@ function TaskRow({ task, removeTask, changeStatus }) {
   };
 
   const navigate = useNavigate();
+  // @ts-ignore
   return (
-    <div
-      className="task"
-      style={{ textDecoration: task.status == "done" ? "line-through" : "" }}
-    >
-      {task.title}
+    <div className="task">
+      <h1
+        style={{ textDecoration: task.status == "done" ? "line-through" : "" }}
+      >
+        {task.title}
+      </h1>
+      <h3> {task.status}</h3>
       <button
         style={{ background: "blue" }}
         onClick={() => navigate(`/update/${task.id}`)}
@@ -30,7 +33,6 @@ function TaskRow({ task, removeTask, changeStatus }) {
       <button style={{ background: "blue" }} onClick={() => toogleModal()}>
         Details
       </button>
-
       <select
         name="status"
         id="status"

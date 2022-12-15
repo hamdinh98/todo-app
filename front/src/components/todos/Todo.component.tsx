@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./Todo.style.css";
 import { Task, TaskStatus } from "../../model/Task";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import PaginatedItems from "../pagination/Pagination.component";
+import PaginationItems from "../pagination/Pagination.component";
 
 // @ts-ignore
 function TaskRow({ task, removeTask, changeStatus }) {
@@ -33,42 +35,13 @@ function TaskRow({ task, removeTask, changeStatus }) {
       <button style={{ background: "blue" }} onClick={() => toogleModal()}>
         Details
       </button>
-      <select
-        name="status"
-        id="status"
-        onChange={() => {
-          changeStatus(task.id, task.status);
-        }}
-        style={{ marginLeft: "10px" }}
-      >
-        <option value={TaskStatus.TODO}>TODO</option>
-        <option value={TaskStatus.DONE}>DONE</option>
-        <option value={TaskStatus.IN_PROGRESS}>IN-PROGRESS</option>
-      </select>
       <Details isOpen={isOpen} details={task} />
     </div>
   );
 }
 
 function Todo() {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const toggle = () => setDropdownOpen((prevState) => !prevState);
   const [tasks, setTasks] = useState<Task[] | undefined>(undefined);
-  //fetching data from the backend
-  // @ts-ignore
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data } = await axios.get("http://localhost:8000/todo");
-      if (data) {
-        setTasks(data);
-      }
-    };
-    fetchData();
-    return () => {
-      setTasks(undefined);
-    };
-  }, []);
-
   const removeTask = async (id: number) => {
     // @ts-ignore
 
@@ -103,34 +76,41 @@ function Todo() {
   };
 
   return (
-    <div className="todo-container">
-      <div className="header">TODO - ITEMS</div>
-      Filter by status
-      <select
-        name="status"
-        id="status"
-        onChange={(e) => {
-          filter(e.target.value);
-        }}
-      >
-        <option value="all">All</option>
-        <option value={TaskStatus.TODO}>TODO</option>
-        <option value={TaskStatus.DONE}>DONE</option>
-        <option value={TaskStatus.IN_PROGRESS}>IN-PROGRESS</option>
-      </select>
-      <div className="tasks">
-        {tasks?.map((task, index) => (
-          <TaskRow
-            task={task}
-            // @ts-ignore
-            index={index}
-            changeStatus={changeStatus}
-            removeTask={removeTask}
-            key={index}
-          />
-        ))}
+    <>
+      <div className="todo-container">
+        <div className="header">Todo - ITEMS</div>
+        Filter by status
+        <select
+          name="status"
+          id="status"
+          onChange={(e) => {
+            filter(e.target.value);
+          }}
+        >
+          <option value="all">All</option>
+          <option value={TaskStatus.TODO}>Todo</option>
+          <option value={TaskStatus.DONE}>DONE</option>
+          <option value={TaskStatus.IN_PROGRESS}>IN-PROGRESS</option>
+        </select>
+        <div className="tasks">
+          {tasks ? (
+            tasks?.map((task, index) => (
+              <TaskRow
+                task={task}
+                // @ts-ignore
+                index={index}
+                changeStatus={changeStatus}
+                removeTask={removeTask}
+                key={index}
+              />
+            ))
+          ) : (
+            <div>No tasks found</div>
+          )}
+        </div>
       </div>
-    </div>
+      <PaginationItems setTasks={setTasks} />
+    </>
   );
 }
 

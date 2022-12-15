@@ -47,7 +47,9 @@ class TaskController extends AbstractController
         $sortBy = $request->query->get('sortBy','title');
         $order = $request->query->get('order','desc');
         $status = $request->query->get('status');
-        $todos = $this->todoResolver->findAll($sortBy , $order,$status);
+        $limit = $request->query->get('limit',5);
+        $offset = $request->query->get('offset',0);
+        $todos = $this->todoResolver->findAll($sortBy , $order,$status,$limit,$offset);
         return $this->json($todos, Response::HTTP_OK);
     }
 
@@ -87,6 +89,14 @@ class TaskController extends AbstractController
             return $this->json("todosIds is null",Response::HTTP_BAD_REQUEST);
          $this->todoResolver->delete($todosIds->getIds());
          return $this->json("success",Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/count",name="count",methods={"GET"})
+     */
+    public function lengthItems():Response
+    {
+        return $this->json($length = $this->todoResolver->lengthItems(),Response::HTTP_OK);
     }
 
 }

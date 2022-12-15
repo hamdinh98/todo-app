@@ -6,6 +6,7 @@ use App\DTO\TodosIds;
 use App\Repository\TaskRepository;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 use Doctrine\ODM\MongoDB\MongoDBException;
+use phpDocumentor\Reflection\Type;
 
 
 class TodoResolver
@@ -38,14 +39,13 @@ class TodoResolver
         }
         $this->taskRepo->getDocumentManager()->flush();
     }
-    public function findAll(string $sort, string $order,?string $status):array
+    public function findAll(string $sort, string $order,?string $status,int $limit,int $offset):array
     {
         if($status===null)
         {
-            return $this->taskRepo->findBy([],[$sort=>$order]);
+            return $this->taskRepo->findBy([],[$sort=>$order],$limit,$offset);
         }
-        return $this->taskRepo->findBy(['status'=>$status],[$sort=>$order]);
-
+        return $this->taskRepo->findBy(['status'=>$status],[$sort=>$order],$limit,$offset);
     }
 
     public function findById(string $id):Task
@@ -53,4 +53,9 @@ class TodoResolver
         //dd($id);
         return $this->taskRepo->findOneBy(['_id'=>$id]);
     }
+
+   public function lengthItems():int
+   {
+        return count($this->taskRepo->findAll());
+   }
 }

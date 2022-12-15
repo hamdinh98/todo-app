@@ -35,7 +35,7 @@ class TaskController extends AbstractController
         if (count($errors) > 0) {
             return $this->json($errors, Response::HTTP_BAD_REQUEST);
         }
-        $this->todoResolver->create($todo);
+        $this->todoResolver->save($todo);
         return $this->json($todo, Response::HTTP_CREATED);
     }
 
@@ -62,6 +62,7 @@ class TaskController extends AbstractController
 
     /**
      * @Route("/{id}", name="update", methods={"PATCH"})
+     * @throws MongoDBException
      */
     public function update(Request $request,string $id,  SerializerInterface $serializer, ValidatorInterface $validator): Response
     {
@@ -71,12 +72,13 @@ class TaskController extends AbstractController
         if (count($errors) > 0) {
             return $this->json($errors, Response::HTTP_BAD_REQUEST);
         }
-        $this->todoResolver->create($todo);
+        $this->todoResolver->save($todo);
         return $this->json($todo, Response::HTTP_OK);
     }
 
     /**
      * @Route("", name="delete", methods={"DELETE"})
+     * @throws MongoDBException
      */
     public function delete(Request $request,SerializerInterface $serializer): Response
     {

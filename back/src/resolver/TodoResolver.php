@@ -20,7 +20,7 @@ class TodoResolver
     /**
      * @throws MongoDBException
      */
-    public function create(Task $todo):void
+    public function save(Task $todo):void
     {
         $this->taskRepo->getDocumentManager()->persist($todo);
         $this->taskRepo->getDocumentManager()->flush();

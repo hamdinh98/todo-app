@@ -32,7 +32,7 @@ const Details = (props: DetailsPropos) => {
 };
 
 // @ts-ignore
-function TaskRow({ task }) {
+function TaskRow({ task, setTasks }) {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const toogleDetails = () => {
@@ -45,7 +45,7 @@ function TaskRow({ task }) {
     });
     if (data) {
       // @ts-ignore
-      setTasks(tasks.filter((task) => task.id !== id));
+      setTasks((tasks) => tasks.filter((task) => task.id !== id));
     }
   };
   // @ts-ignore
@@ -118,6 +118,7 @@ function TodoList() {
                 // @ts-ignore
                 index={index}
                 key={index}
+                setTasks={setTasks}
               />
             ))
           ) : (

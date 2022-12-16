@@ -27,7 +27,7 @@ class FindAllResponse
 
     public function getTotalLength():int
     {
-        return $this->length;
+        return $this->totalLength;
     }
 
     public function setTodosList(array $todosList):self
@@ -36,9 +36,9 @@ class FindAllResponse
         return $this;
     }
 
-    public function setTotalLength(int $length):self
+    public function setTotalLength(int $totalLength):self
     {
-        $this->length = $length;
+        $this->$totalLength = $totalLength;
         return $this;
     }
 }

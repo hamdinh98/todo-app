@@ -50,7 +50,6 @@ class TodoResolver
         if($status===null)
         {
             $response->setTodosList($this->taskRepo->findBy([],[$sort=>$order],$limit,$offset))->setTotalLength($count);
-            dd($response);
             return $response;
         }
         $response->setTodosList($this->taskRepo->findBy([],[$sort=>$order],$limit,$offset))->setTotalLength($count);

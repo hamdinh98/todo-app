@@ -64,6 +64,7 @@ const AddElementForRoutes = () => {
             console.log(e);
           }
         }}
+        action="create"
       />
     </PrivateRoute>
   );
@@ -89,6 +90,7 @@ const UpdateElementForRoutes = () => {
             console.log(e);
           }
         }}
+        action="update"
       />
     </PrivateRoute>
   );

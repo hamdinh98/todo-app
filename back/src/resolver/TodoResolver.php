@@ -59,6 +59,6 @@ class TodoResolver
     public function findById(string $id):Task
     {
         //dd($id);
-        return $this->taskRepo->findOneBy(['_id'=>$id]);
+        return $this->taskRepo->findOneBy(['id'=>$id]);
     }
 }

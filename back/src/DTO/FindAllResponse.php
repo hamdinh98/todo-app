@@ -16,7 +16,7 @@ class FindAllResponse
     public function __construct()
     {
         $this->todosList = [];
-        $this->length = 0;
+        $this->totalLength = 0;
     }
 
     // getter and setter for todosList and length
@@ -38,7 +38,7 @@ class FindAllResponse
 
     public function setTotalLength(int $totalLength):self
     {
-        $this->$totalLength = $totalLength;
+        $this->totalLength = $totalLength;
         return $this;
     }
 }

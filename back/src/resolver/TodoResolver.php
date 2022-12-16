@@ -43,12 +43,18 @@ class TodoResolver
     public function findAll(string $sort, string $order,?string $status,int $limit,int $offset):FindAllResponse
     {
         $response = new FindAllResponse();
-        $length = count($this->taskRepo->findAll());
+        /**
+         * @var int $count
+         */
+        $count = count($this->taskRepo->findAll());
         if($status===null)
         {
-            return $response->setTodosList($this->taskRepo->findBy([],[$sort=>$order],$limit,$offset))->setTotalLength($length);
+            $response->setTodosList($this->taskRepo->findBy([],[$sort=>$order],$limit,$offset))->setTotalLength($count);
+            dd($response);
+            return $response;
         }
-        return $response->setTodosList($this->taskRepo->findBy(['status'=>$status],[$sort=>$order],$limit,$offset))->setTotalLength($length);
+        $response->setTodosList($this->taskRepo->findBy([],[$sort=>$order],$limit,$offset))->setTotalLength($count);
+        return $response;
     }
 
     public function findById(string $id):Task

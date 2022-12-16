@@ -2,6 +2,7 @@
 
 namespace App\resolver;
 use App\Document\Task;
+use App\DTO\FindAllResponse;
 use App\DTO\TodosIds;
 use App\Repository\TaskRepository;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
@@ -39,13 +40,15 @@ class TodoResolver
         }
         $this->taskRepo->getDocumentManager()->flush();
     }
-    public function findAll(string $sort, string $order,?string $status,int $limit,int $offset):array
+    public function findAll(string $sort, string $order,?string $status,int $limit,int $offset):FindAllResponse
     {
+        $response = new FindAllResponse();
+        $length = count($this->taskRepo->findAll());
         if($status===null)
         {
-            return $this->taskRepo->findBy([],[$sort=>$order],$limit,$offset);
+            return $response->setTodosList($this->taskRepo->findBy([],[$sort=>$order],$limit,$offset))->setTotalLength($length);
         }
-        return $this->taskRepo->findBy(['status'=>$status],[$sort=>$order],$limit,$offset);
+        return $response->setTodosList($this->taskRepo->findBy(['status'=>$status],[$sort=>$order],$limit,$offset))->setTotalLength($length);
     }
 
     public function findById(string $id):Task
@@ -53,9 +56,4 @@ class TodoResolver
         //dd($id);
         return $this->taskRepo->findOneBy(['_id'=>$id]);
     }
-
-   public function lengthItems():int
-   {
-        return count($this->taskRepo->findAll());
-   }
 }

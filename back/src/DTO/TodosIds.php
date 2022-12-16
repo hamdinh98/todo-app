@@ -4,7 +4,7 @@ namespace App\DTO;
 
 class TodosIds
 {
-    private array $ids = array();
+    private array $ids ;
       //constructor
      public function __construct(array $ids)
         {

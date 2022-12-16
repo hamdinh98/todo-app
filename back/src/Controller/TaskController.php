@@ -91,12 +91,4 @@ class TaskController extends AbstractController
          return $this->json("success",Response::HTTP_OK);
     }
 
-    /**
-     * @Route("/count",name="count",methods={"GET"})
-     */
-    public function lengthItems():Response
-    {
-        return $this->json($length = $this->todoResolver->lengthItems(),Response::HTTP_OK);
-    }
-
 }

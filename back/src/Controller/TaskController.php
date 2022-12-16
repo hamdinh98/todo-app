@@ -68,8 +68,8 @@ class TaskController extends AbstractController
      */
     public function update(Request $request,string $id,  SerializerInterface $serializer, ValidatorInterface $validator): Response
     {
-        $Find_todo = $this->todoResolver->findById($id);
-        $todo = $serializer->deserialize($request->getContent(),Task::class,'json',[AbstractNormalizer::OBJECT_TO_POPULATE => $Find_todo]);
+        $RetrievedTodoByid = $this->todoResolver->findById($id);
+        $todo = $serializer->deserialize($request->getContent(),Task::class,'json',[AbstractNormalizer::OBJECT_TO_POPULATE => $RetrievedTodoByid]);
         $errors = $validator->validate($todo);
         if (count($errors) > 0) {
             return $this->json($errors, Response::HTTP_BAD_REQUEST);

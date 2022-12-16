@@ -13,20 +13,22 @@ const PaginationItems = ({ setTasks }: PaginationProps) => {
   const [total, setTotal] = useState<number>(0);
 
   // retrieve the total number of items
+  // @ts-ignore
   useEffect(() => {
-    const fetch = async () => {
-      const { data } = await axios.get(`http://localhost:8000/todo/count`);
-      setTotal(data);
-    };
-    fetch();
     handlePageChange(1);
+    return () => {
+      setTasks([]);
+    };
   }, []);
 
   const handlePageChange = async (page: number) => {
     const { data } = await axios.get(`http://localhost:8000/todo`, {
       params: { offset: page, limit: limit.current },
     });
-    setTasks(data);
+    if (page === 1) {
+      setTotal(data.totalLength);
+    }
+    setTasks(data.todosList);
     setCurrentPage(page);
   };
 

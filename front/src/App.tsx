@@ -1,5 +1,5 @@
 import "./App.css";
-import Todo from "./components/todos/Todo.component";
+import TodoList from "./components/todos/TodoList";
 import LoginForm from "./components/login/Login.component";
 import {
   createBrowserRouter,
@@ -7,13 +7,12 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
-import Navbar from "./components/navbar/Navbar.component";
+import Navbar from "./components/navbar/Navbar";
 import Form from "./components/form/form.component";
 import { Task } from "./model/Task";
 import React from "react";
 import PrivateRoute from "./utils/PrivateRoute";
 import axios from "axios";
-import navbarComponent from "./components/navbar/Navbar.component";
 
 const LoginElementForRoutes = () => {
   return (
@@ -39,7 +38,7 @@ const ListElementForRoutes = () => {
     // @ts-ignore
     <PrivateRoute>
       <Navbar />
-      <Todo />
+      <TodoList />
     </PrivateRoute>
   );
 };

@@ -1,14 +1,12 @@
 import React from "react";
-import "./Navbar.style.css";
+import "./Navbar.css";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import { routes } from "../../App";
 
 const Navbar: React.FC = () => {
   // @ts-ignore
   let username = useAuth();
   const navigate = useNavigate();
-  const { pathname } = useLocation();
   const renderTab: Object = {
     logout_Login: username ? (
       <Link

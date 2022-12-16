@@ -1,21 +1,11 @@
-import React,{useEffect} from "react";
+import React, { useEffect } from "react";
 import useAuth from "../hooks/useAuth";
-import {Navigate, useNavigate} from "react-router-dom";
+import { Route, useNavigate, Navigate } from "react-router-dom";
 
 // @ts-ignore
 function PrivateRoute({ children }) {
-    const navigate = useNavigate();
-    const auth = useAuth();
-
-    useEffect(() => {
-        return () => {
-            if (!auth) {
-                navigate('/');
-            }
-        }
-    }, []);
-
-    return children;
+  const auth = useAuth();
+  return !auth ? <Navigate to="/" /> : children;
 }
 
 export default PrivateRoute;
